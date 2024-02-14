@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: netbox_to_bind_sync
   author: Shoaib Mohammed Shahapuri
   description: Role to sync dns configuration from netbox to bind server
   company: World Wide Technology
