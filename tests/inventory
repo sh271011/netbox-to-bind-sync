@@ -1,0 +1,2 @@
+[bind_server]
+192.168.2.9 ansible_user=labuser ansible_ssh_pass=Labpass01! ansible_port=2022

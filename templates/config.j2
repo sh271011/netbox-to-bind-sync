@@ -1,0 +1,21 @@
+---
+providers:
+  zonefile:
+    class: octodns_bind.ZoneFileSource
+    directory: "{{ bind_directory_path }}"
+    file_extension: .db #file extension like db or you can use your hostname, depending on how your Bind files are setup
+    check_origin: false
+  netbox:
+    class: octodns_netbox.NetBoxDNSSource
+    url: "{{ netbox_url }}"
+    token: "{{ netbox_api_token }}"
+    ttl: 60
+
+
+# Add zones and records to sync
+zones:
+  wwtlab.edu.:
+    sources:
+      - netbox
+    targets:
+      - zonefile

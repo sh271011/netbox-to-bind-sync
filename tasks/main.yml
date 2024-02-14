@@ -1,0 +1,47 @@
+---
+- name: Ensure python3-venv is installed
+  apt:
+    name: python3-venv
+    state: present
+
+- name: Create DNS Sync Directory
+  file:
+    path: "{{ dns_sync_directory }}"
+    state: directory
+
+- name: Create Python virtual environment
+  ansible.builtin.command: "python3 -m venv {{ dns_sync_directory }}/venv"
+  args:
+    creates: "{{ dns_sync_directory }}/venv/bin/python"
+
+- name: Copy dependencies to the venv directory
+  ansible.builtin.copy:
+    src: "{{ role_path }}/templates/requirements.txt"
+    dest: "{{ dns_sync_directory}}"
+
+- name: Install Python dependencies from requirements.txt
+  ansible.builtin.command: "{{ dns_sync_directory }}/venv/bin/pip install -r {{ dns_sync_directory}}/requirements.txt"
+
+- name: Copy __init__.py to octodns_netbox
+  ansible.builtin.copy:
+    src: "{{ role_path }}/templates/__init__.py"
+    dest: "{{ dns_sync_directory }}/venv/lib/python3.10/site-packages/octodns_netbox/__init__.py"
+
+- name: Convert config.j2 to config.yml
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/config.j2"
+    dest: "{{ role_path }}/templates/config.yml"
+  delegate_to: localhost
+
+- name: Copy config to the venv directory
+  ansible.builtin.copy:
+    src: "{{ role_path }}/templates/config.yml"
+    dest: "{{ dns_sync_directory}}"
+
+- name: Execute octodns-sync command
+  ansible.builtin.command: "{{ dns_sync_directory }}/venv/bin/octodns-sync --config {{ dns_sync_directory}}/config.yml --doit"
+
+- name: Restart BIND9 service
+  ansible.builtin.service:
+    name: bind9
+    state: restarted

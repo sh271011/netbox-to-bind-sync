@@ -1,0 +1,10 @@
+octodns
+octodns-bind
+octodns-netbox
+dnspython
+jaraco.classes
+jeepney
+pydantic
+pydantic_core
+pynetbox
+zipp

@@ -1,0 +1,6 @@
+- name: NetBox to BIND DNS Sync
+  hosts: bind_server
+  gather_facts: false
+  become: true
+  roles:
+    - netbox-to-bind-sync
